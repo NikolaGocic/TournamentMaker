@@ -18,12 +18,13 @@ fun MainScreenComposable(
             screen = 0
         }
         2 -> BackHandler(enabled = false) {}
-        3 -> BackHandler(enabled = false) {}
+        3 -> BackHandler(enabled = true) {}
         4 -> BackHandler(enabled = false) {}
 
     }
 
     if(screen == 0) SelectionScreen(mainViewModel = mainViewModel, goToNextScreen = {screen=1})
     if(screen == 1) DistributionScreen(mainViewModel = mainViewModel, goToNextScreen = {screen=2}, goToPreviusScreen = {screen=0})
-    if(screen == 2) TournamentScreen(mainViewModel = mainViewModel, goToNextScreen = {})
+    if(screen == 2) TournamentScreen(mainViewModel = mainViewModel, goToNextScreen = {screen=3})
+    if(screen == 3) WinnerScreen(mainViewModel = mainViewModel, goToNextScreen = {screen=4})
 }

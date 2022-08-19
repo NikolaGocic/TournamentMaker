@@ -1,6 +1,5 @@
 package com.apptour23ma.ker.viewmodel
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.widget.Toast
 import androidx.compose.runtime.*
@@ -14,6 +13,12 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
     var flagsSelected by mutableStateOf(listOf<Flag>())
     var flagsNotSelected by mutableStateOf(listOf<Flag>())
     var groupWinners by mutableStateOf(listOf<Flag>())
+    var eightWinners by mutableStateOf(listOf<Flag>())
+    var fourWinners by mutableStateOf(listOf<Flag>())
+    var twoWinners by mutableStateOf(listOf<Flag>())
+    var first by mutableStateOf(Flag("Null", 0))
+    var second by mutableStateOf(Flag("Null", 0))
+    var third by mutableStateOf(Flag("Null", 0))
 
 
     init{
@@ -89,15 +94,30 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
         flagsSelected=list
     }
 
+    fun shuffleGroupWinners() {
+        val list: MutableList<Flag> = arrayListOf()
+        groupWinners.forEach{list.add(it)}
+        list.shuffle()
+        groupWinners=list
+    }
+
     fun getWinnersForGroup(groupId: Int): Boolean {
         if(flagsSelected[groupId*4] !in groupWinners &&
             flagsSelected[groupId*4+1] !in groupWinners &&
             flagsSelected[groupId*4+2] !in groupWinners &&
             flagsSelected[groupId*4+3] !in groupWinners) {
 
-            val first = (0..3).random()
+            var winner = (0..10000).random()
+            if(winner<2500) winner = 0 else if(winner<5000) winner=1 else if(winner<7500) winner=2 else winner=3
+            val first = winner
+
+
             var second = first
-            while(second==first) second = (0..3).random()
+            while(second==first){
+                var winner = (0..10000).random()
+                if(winner<2500) winner = 0 else if(winner<5000) winner=1 else if(winner<7500) winner=2 else winner=3
+                second = winner
+            }
 
             val list: MutableList<Flag> = arrayListOf()
             groupWinners.forEach{list.add(it)}
@@ -109,6 +129,76 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
             return true
         } else return false
 
+    }
+
+    fun getWinnersFromEight(): Boolean{
+        val list: MutableList<Flag> = arrayListOf()
+
+        if(eightWinners.isEmpty()){
+            for(index in 0 .. groupWinners.size-1 step 2) {
+                var winner = (0..10000).random()
+                if(winner>5000) winner = 1 else winner=0
+                list.add(groupWinners[index+winner])
+            }
+
+            eightWinners = list
+            return true
+        }
+
+        return false
+    }
+
+    fun getWinnersFromFour(): Boolean{
+        val list: MutableList<Flag> = arrayListOf()
+
+        if(fourWinners.isEmpty()){
+            for(index in 0 .. eightWinners.size-2 step 2) {
+                var winner = (0..10000).random()
+                if(winner>5000) winner = 1 else winner=0
+                list.add(eightWinners[index+winner])
+            }
+
+            fourWinners = list
+            return true
+        }
+
+        return false
+    }
+
+    fun getWinnersFromTwo(): Boolean{
+        val list: MutableList<Flag> = arrayListOf()
+
+        if(twoWinners.isEmpty()){
+            for(index in 0 .. fourWinners.size-2 step 2) {
+                var winner = (0..10000).random()
+                if(winner>5000) winner = 1 else winner=0
+                list.add(fourWinners[index+winner])
+            }
+
+            twoWinners = list
+
+            if(fourWinners[0] !in twoWinners) third = fourWinners[0]
+            else if(fourWinners[1] !in twoWinners) third = fourWinners[1]
+            else if(fourWinners[2] !in twoWinners) third = fourWinners[2]
+            else if(fourWinners[3] !in twoWinners) third = fourWinners[3]
+
+            return true
+        }
+
+        return false
+    }
+
+    fun getWinner(): Boolean{
+        if(first.name=="Null"){
+            var winner = (0..10000).random()
+            if(winner>5000) winner = 1 else winner=0
+            first = twoWinners[winner]
+            if(winner==0) second = twoWinners[1] else second=twoWinners[0]
+
+            return true
+        }
+
+        return false
     }
 
 

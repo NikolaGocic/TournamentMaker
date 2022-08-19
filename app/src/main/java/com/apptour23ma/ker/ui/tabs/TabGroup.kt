@@ -84,7 +84,10 @@ fun TabGroup(
         }
 
         Button(
-            onClick = { goToTab2() },
+            onClick = {
+                goToTab2()
+                mainViewModel.shuffleGroupWinners()
+            },
             colors = ButtonDefaults.buttonColors(backgroundColor = Red1),
             enabled = mainViewModel.groupWinners.size == 16,
             modifier = Modifier
