@@ -1,5 +1,6 @@
 package com.apptour23ma.ker
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,14 +11,13 @@ import com.apptour23ma.ker.viewmodel.MainViewModel
 
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalUnitApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val mainViewModel: MainViewModel by viewModels()
 
         setContent {
-            MainScreenComposable(mainViewModel = mainViewModel)
+            MainScreenComposable(mainViewModel = mainViewModel, )
         }
     }
 }

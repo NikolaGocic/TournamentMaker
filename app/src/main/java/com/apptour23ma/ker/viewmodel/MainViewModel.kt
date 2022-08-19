@@ -13,6 +13,7 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
 
     var flagsSelected by mutableStateOf(listOf<Flag>())
     var flagsNotSelected by mutableStateOf(listOf<Flag>())
+    var groupWinners by mutableStateOf(listOf<Flag>())
 
 
     init{
@@ -21,7 +22,7 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
 
 
     fun preperFlags(){
-        var allFlags: MutableList<Flag> = arrayListOf()
+        val allFlags: MutableList<Flag> = arrayListOf()
         allFlags.add(Flag("Qatar", R.drawable.katar))
         allFlags.add(Flag("Ecuador", R.drawable.ecuador))
         allFlags.add(Flag("Senegal", R.drawable.senegal))
@@ -62,7 +63,7 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
     }
 
     fun selectFlag(flag: Flag){
-        var list: MutableList<Flag> = arrayListOf()
+        val list: MutableList<Flag> = arrayListOf()
 
         if(flag.selected) {
             flag.selected=false
@@ -80,5 +81,36 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
                     flagsNotSelected = flagsNotSelected.filter { flag.name!=it.name }
                 }
     }
+
+    fun shuffleSelected() {
+        val list: MutableList<Flag> = arrayListOf()
+        flagsSelected.forEach{list.add(it)}
+        list.shuffle()
+        flagsSelected=list
+    }
+
+    fun getWinnersForGroup(groupId: Int): Boolean {
+        if(flagsSelected[groupId*4] !in groupWinners &&
+            flagsSelected[groupId*4+1] !in groupWinners &&
+            flagsSelected[groupId*4+2] !in groupWinners &&
+            flagsSelected[groupId*4+3] !in groupWinners) {
+
+            val first = (0..3).random()
+            var second = first
+            while(second==first) second = (0..3).random()
+
+            val list: MutableList<Flag> = arrayListOf()
+            groupWinners.forEach{list.add(it)}
+
+            list.add(flagsSelected[groupId*4+first])
+            list.add(flagsSelected[groupId*4+second])
+
+            groupWinners=list
+            return true
+        } else return false
+
+    }
+
+
 
 }
