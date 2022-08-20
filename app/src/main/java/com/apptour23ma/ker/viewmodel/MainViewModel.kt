@@ -1,15 +1,19 @@
 package com.apptour23ma.ker.viewmodel
 
 import android.app.Application
+import android.os.AsyncTask
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.*
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.*
 import com.apptour23ma.ker.R
-import com.apptour23ma.ker.data.Flag
+import com.apptour23ma.ker.data.*
+import kotlinx.coroutines.launch
 
 class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
 
 
+    var flagDao: Flag2Dao = Flag2RoomDatabase(appContext).flagDao()
     var flagsSelected by mutableStateOf(listOf<Flag>())
     var flagsNotSelected by mutableStateOf(listOf<Flag>())
     var groupWinners by mutableStateOf(listOf<Flag>())
@@ -19,14 +23,46 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
     var first by mutableStateOf(Flag("Null", 0))
     var second by mutableStateOf(Flag("Null", 0))
     var third by mutableStateOf(Flag("Null", 0))
+    var winnerList by mutableStateOf(listOf<Flag2>())
 
 
     init{
-        preperFlags()
+        prepareFlags()
+    }
+
+    private fun saveWinner(winner: Flag2){
+        class SaveWinner : AsyncTask<Void, Void, Void>() {
+
+            override fun doInBackground(vararg p0: Void?): Void? {
+                flagDao.insert(winner)
+                return null
+            }
+
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                getWinners()
+            }
+        }
+
+        SaveWinner().execute()
+    }
+
+    private fun getWinners(){
+        class GetWinners : AsyncTask<Void, Void, Void>() {
+
+            override fun doInBackground(vararg p0: Void?): Void? {
+                winnerList=flagDao.getAllFlags()
+                return null
+            }
+        }
+
+        GetWinners().execute()
     }
 
 
-    fun preperFlags(){
+
+    private fun prepareFlags(){
+
         val allFlags: MutableList<Flag> = arrayListOf()
         allFlags.add(Flag("Qatar", R.drawable.katar))
         allFlags.add(Flag("Ecuador", R.drawable.ecuador))
@@ -77,7 +113,7 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
             flagsNotSelected = list
             flagsSelected = flagsSelected.filter { flag.name!=it.name }
         }
-        else if(flagsSelected.size == 32) Toast.makeText(appContext,"All 32 nations selected!",Toast.LENGTH_SHORT).show()
+        else if(flagsSelected.size == 32) { /*DO Nothing*/}
                 else {
                     flag.selected=true
                     list.add(flag)
@@ -195,12 +231,27 @@ class MainViewModel(val appContext: Application): AndroidViewModel(appContext) {
             first = twoWinners[winner]
             if(winner==0) second = twoWinners[1] else second=twoWinners[0]
 
+
+            saveWinner(Flag2(first.name,first.resource))
+
             return true
         }
 
         return false
     }
 
+    fun startNew() {
+        val list: MutableList<Flag> = arrayListOf()
+        prepareFlags()
+        flagsSelected=list
+        groupWinners=list
+        eightWinners=list
+        fourWinners=list
+        twoWinners=list
+        first=Flag("Null", 0)
+        second=Flag("Null", 0)
+        third=Flag("Null", 0)
 
+    }
 
 }

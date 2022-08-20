@@ -29,7 +29,8 @@ import com.apptour23ma.ker.viewmodel.MainViewModel
 @Composable
 fun WinnerScreen(
     mainViewModel: MainViewModel,
-    goToNextScreen : (() -> Unit)
+    startNew: (() -> Unit),
+    goToNextScreen: (() -> Unit)
 ){
 
     Column(
@@ -95,10 +96,9 @@ fun WinnerScreen(
         }
 
         Button(
-            onClick =
-            {
-                mainViewModel.shuffleSelected()
-                goToNextScreen()
+            onClick = {
+                mainViewModel.startNew()
+                startNew()
             },
             enabled = mainViewModel.flagsSelected.size==32,
             colors = ButtonDefaults.buttonColors(backgroundColor = Red1),
@@ -117,9 +117,7 @@ fun WinnerScreen(
             )
         }
         Button(
-            onClick =
-            {
-                mainViewModel.shuffleSelected()
+            onClick = {
                 goToNextScreen()
             },
             enabled = mainViewModel.flagsSelected.size==32,

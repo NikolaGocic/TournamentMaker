@@ -78,7 +78,7 @@ fun MatchCard(
                 shape = RoundedCornerShape(4)
             ){
                 if(winner!=0)
-                Column(modifier=Modifier.padding(all=15.dp)) {
+                Column(modifier=Modifier.padding(all=10.dp)) {
                     Row(modifier=Modifier.padding(top=3.dp,bottom=3.dp).fillMaxWidth(),verticalAlignment = Alignment.CenterVertically){
                         Image(
                             modifier= Modifier.height(45.dp),
